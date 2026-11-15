@@ -142,6 +142,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-iostreams:2.26.0")
     implementation("org.ow2.asm:asm-commons:9.9.1")
     implementation("org.spongepowered:configurate-yaml:4.2.0")
+    implementation("net.fabricmc:sponge-mixin:0.17.5+mixin.0.8.7")
 
     // Deps that were previously in the API but have now been moved here for backwards compat, eventually to be removed
     runtimeOnly("commons-lang:commons-lang:2.6")
@@ -283,7 +284,7 @@ fun TaskContainer.registerRunTask(
     block: JavaExec.() -> Unit
 ): TaskProvider<JavaExec> = register<JavaExec>(name) {
     group = "runs"
-    mainClass.set("org.bukkit.craftbukkit.Main")
+    mainClass.set("io.papermc.paper.mixin.launch.Launcher")
     standardInput = System.`in`
     workingDir = rootProject.layout.projectDirectory
         .dir(providers.gradleProperty("paper.runWorkDir").getOrElse("run"))

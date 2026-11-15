@@ -49,6 +49,7 @@ subprojects {
     repositories {
         mavenCentral()
         maven(paperMavenPublicUrl)
+        maven("https://maven.fabricmc.net/")
     }
 
     extensions.configure<PublishingExtension> {
