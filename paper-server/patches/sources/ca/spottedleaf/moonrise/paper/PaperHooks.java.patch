@@ -38,7 +38,7 @@
 +
 +    @Override
 +    public String getBrand() {
-+        return "Paper";
++        return "Mosaic";
 +    }
 +
 +    @Override
