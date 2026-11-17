@@ -1,8 +1,5 @@
 package io.papermc.paper.mixin.launch;
 
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.SafeConstructor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -15,12 +12,20 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
+import org.jspecify.annotations.NonNull;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
-final class MixinScanner {
+public final class MixinScanner {
     private static final MosaicMixinLogger LOGGER = new MosaicMixinLogger();
     private static final String CONF_KEY = "mixinConfig";
 
-    static Result scan(Path pluginsDir) {
+    private MixinScanner() {
+
+    }
+
+    static @NonNull Result scan(@NonNull Path pluginsDir) {
         List<URL> jars = new ArrayList<>();
         List<String> configs = new ArrayList<>();
 
@@ -34,18 +39,18 @@ final class MixinScanner {
 
                     jars.add(jar.toUri().toURL());
                     configs.addAll(found);
-                } catch (Exception e) {
+                } catch (@NonNull Exception e) {
                     LOGGER.warn("[Mosaic] skipping mixins from " + jar.getFileName() + ": " + e);
                 }
             }
-        } catch (IOException e) {
+        } catch (@NonNull IOException e) {
             LOGGER.warn("[Mosaic] could not list " + pluginsDir + ": " + e);
         }
 
         return new Result(jars, configs);
     }
 
-    private static List<String> read(Path jar) throws IOException {
+    private static @NonNull List<String> read(@NonNull Path jar) throws IOException {
         try (JarFile jarFile = new JarFile(jar.toFile())) {
             JarEntry yml = jarFile.getJarEntry("paper-plugin.yml");
             if (yml == null) return List.of();
@@ -70,5 +75,7 @@ final class MixinScanner {
         }
     }
 
-    record Result(List<URL> jars, List<String> configs) {}
+    record Result(@NonNull List<URL> jars, @NonNull List<String> configs) {
+
+    }
 }
