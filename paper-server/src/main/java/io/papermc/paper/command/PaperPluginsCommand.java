@@ -8,6 +8,7 @@ import io.leangen.geantyref.GenericTypeReflector;
 import io.leangen.geantyref.TypeToken;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.mixin.launch.MosaicPlugins;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import io.papermc.paper.plugin.entrypoint.Entrypoint;
 import io.papermc.paper.plugin.entrypoint.LaunchEntryPointHandler;
@@ -43,7 +44,7 @@ public class PaperPluginsCommand {
         .append(asPlainComponents("""
                                       Server plugins can add new behavior to your server!
                                       You can find new plugins on Paper's plugin repository, Hangar.
-                                      
+
                                       https://hangar.papermc.io/
                                       """));
 
@@ -51,16 +52,24 @@ public class PaperPluginsCommand {
         .append(asPlainComponents("""
                                       A legacy plugin is a plugin that was made on
                                       very old unsupported versions of the game.
-                                      
+
                                       It is encouraged that you replace this plugin,
                                       as they might not work in the future and may cause
                                       performance issues.
+                                      """));
+
+    private static final Component MOSAIC_PLUGIN_INFO = Component.text("ℹ What is a Mosaic plugin?", INFO_COLOR)
+        .append(asPlainComponents("""
+                                      A Mosaic plugin is a plugin that uses
+                                      mixins to modify parts of the game's
+                                      code that provided APIs don't support.
                                       """));
 
     private static final Component LEGACY_PLUGIN_STAR = Component.text('*', TextColor.color(255, 212, 42)).hoverEvent(LEGACY_PLUGIN_INFO);
     private static final Component INFO_ICON_START = Component.text("ℹ ", INFO_COLOR);
     private static final Component PLUGIN_TICK = Component.text("- ", NamedTextColor.DARK_GRAY);
     private static final Component PLUGIN_TICK_EMPTY = Component.text(" ");
+    private static final Component MOSAIC_PLUGIN_SYMBOL = Component.text('$').color(TextColor.color(0xa8c94b)).hoverEvent(MOSAIC_PLUGIN_INFO);
 
     private static final Component INFO_ICON_SERVER_PLUGIN = INFO_ICON_START.hoverEvent(SERVER_PLUGIN_INFO).clickEvent(ClickEvent.openUrl("https://docs.papermc.io/paper/adding-plugins"));
 
@@ -113,6 +122,8 @@ public class PaperPluginsCommand {
         final String name = provider.getMeta().getName();
         final Component pluginName = Component.text(name, fromStatus(provider))
             .clickEvent(ClickEvent.runCommand("/version " + name));
+
+        if (MosaicPlugins.is(name)) builder.append(MOSAIC_PLUGIN_SYMBOL);
 
         builder.append(pluginName);
 

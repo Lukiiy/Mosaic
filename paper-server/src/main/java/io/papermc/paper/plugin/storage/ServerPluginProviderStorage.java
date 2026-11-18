@@ -1,6 +1,7 @@
 package io.papermc.paper.plugin.storage;
 
 import com.mojang.logging.LogUtils;
+import io.papermc.paper.mixin.launch.MosaicPlugins;
 import io.papermc.paper.plugin.provider.entrypoint.DependencyContext;
 import io.papermc.paper.plugin.entrypoint.dependency.DependencyContextHolder;
 import io.papermc.paper.plugin.entrypoint.strategy.ProviderConfiguration;
@@ -49,6 +50,9 @@ public class ServerPluginProviderStorage extends ConfiguredProviderStorage<JavaP
         This is a hack and a better solution here would be to store failed plugin providers elsewhere.
          */
         pluginProviders.removeIf((provider) -> (provider instanceof PaperPluginParent.PaperServerPluginProvider pluginProvider && pluginProvider.shouldSkipCreation()));
+
+        // ^ good call...
+        pluginProviders.removeIf(provider -> MosaicPlugins.isBlocked(provider.getMeta().getName()));
     }
 
     // We need to call the load methods AFTER all plugins are constructed
