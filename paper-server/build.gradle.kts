@@ -144,6 +144,7 @@ dependencies {
     implementation("org.ow2.asm:asm-commons:9.9.1")
     implementation("org.spongepowered:configurate-yaml:4.2.0")
     implementation("net.fabricmc:sponge-mixin:0.17.5+mixin.0.8.7")
+    implementation("io.github.llamalad7:mixinextras-common:0.5.5")
 
     // Deps that were previously in the API but have now been moved here for backwards compat, eventually to be removed
     runtimeOnly("commons-lang:commons-lang:2.6")

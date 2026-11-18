@@ -18,7 +18,8 @@ public final class MixinClassLoader extends URLClassLoader { // todo
     private static final String[] BRIDGED = {
         "org.spongepowered.asm.",
         "org.objectweb.asm.",
-        "io.papermc.paper.mixin.launch."
+        "io.papermc.paper.mixin.launch.",
+        "com.llamalad7.mixinextras."
     };
 
     private final ClassLoader bridge = MixinClassLoader.class.getClassLoader();
