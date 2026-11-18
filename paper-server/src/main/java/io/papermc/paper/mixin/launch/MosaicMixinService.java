@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.launch.platform.container.ContainerHandleURI;
@@ -27,65 +29,61 @@ import org.spongepowered.asm.service.ITransformerProvider;
 import org.spongepowered.asm.util.ReEntranceLock;
 
 public final class MosaicMixinService implements IMixinService, IClassProvider, IClassBytecodeProvider, ITransformerProvider, IClassTracker {
-    static volatile MixinClassLoader loader;
+    public static final ILogger LOGGER = new MosaicMixinLogger();
+
+    public static volatile MixinClassLoader loader;
     private static volatile IMixinTransformer transformer;
     private final ReEntranceLock lock = new ReEntranceLock(1);
-    private static final ILogger LOGGER = new MosaicMixinLogger();
 
-    public MosaicMixinService() {}
-
-    static IMixinTransformer getTransformer() {
+    static @Nullable IMixinTransformer getTransformer() {
         return transformer;
     }
 
-    private byte[] bytes(String name) throws ClassNotFoundException, IOException {
-        byte[] bytes = loader.getClassBytes(name);
-        if (bytes == null) throw new ClassNotFoundException(name);
-
-        return bytes;
+    private @Nullable byte @Nullable [] bytes(@NonNull String name) throws IOException {
+        return loader.getClassBytes(name);
     }
 
     @Override
-    public ClassNode getClassNode(final String name) throws ClassNotFoundException, IOException {
-        return getClassNode(name, true);
+    public @NonNull ClassNode getClassNode(final @NonNull String name) throws ClassNotFoundException, IOException {
+        return this.getClassNode(name, true);
     }
 
     @Override
-    public ClassNode getClassNode(final String name, final boolean runTransformers) throws ClassNotFoundException, IOException {
-        return getClassNode(name, runTransformers, 0);
+    public @NonNull ClassNode getClassNode(final @NonNull String name, final boolean runTransformers) throws ClassNotFoundException, IOException {
+        return this.getClassNode(name, runTransformers, 0);
     }
 
     @Override
-    public ClassNode getClassNode(final String name, final boolean runTransformers, final int readerFlags) throws ClassNotFoundException, IOException {
+    public @NonNull ClassNode getClassNode(final @NonNull String name, final boolean runTransformers, final int readerFlags) throws ClassNotFoundException, IOException {
         ClassNode node = new ClassNode();
 
-        new ClassReader(bytes(name)).accept(node, readerFlags);
+        new ClassReader(this.bytes(name)).accept(node, readerFlags);
 
         return node;
     }
 
     @Override
-    public URL[] getClassPath() {
+    public @NonNull URL @NonNull [] getClassPath() {
         return new URL[0];
     }
 
     @Override
-    public Class<?> findClass(final String name) throws ClassNotFoundException {
+    public @NonNull Class<?> findClass(final @NonNull String name) throws ClassNotFoundException {
         return loader.loadClass(name);
     }
 
     @Override
-    public Class<?> findClass(final String name, final boolean initialize) throws ClassNotFoundException {
+    public @NonNull Class<?> findClass(final @NonNull String name, final boolean initialize) throws ClassNotFoundException {
         return Class.forName(name, initialize, loader);
     }
 
     @Override
-    public Class<?> findAgentClass(final String name, final boolean initialize) throws ClassNotFoundException {
+    public @NonNull Class<? extends @NonNull Object> findAgentClass(final @NonNull String name, final boolean initialize) throws ClassNotFoundException {
         return Class.forName(name, initialize, MosaicMixinService.class.getClassLoader());
     }
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "Mosaic";
     }
 
@@ -95,134 +93,146 @@ public final class MosaicMixinService implements IMixinService, IClassProvider, 
     }
 
     @Override
-    public void prepare() {}
+    public void prepare() {
+
+    }
 
     @Override
-    public MixinEnvironment.Phase getInitialPhase() {
+    public MixinEnvironment.@NonNull Phase getInitialPhase() {
         return MixinEnvironment.Phase.PREINIT;
     }
 
     @Override
-    public void offer(final IMixinInternal internal) {
+    public void offer(final @NonNull IMixinInternal internal) {
         if (internal instanceof IMixinTransformerFactory factory) transformer = factory.createTransformer();
     }
 
     @Override
-    public void init() {}
+    public void init() {
 
-    @Override
-    public void beginPhase() {}
-
-    @Override
-    public void checkEnv(final Object bootSource) {}
-
-    @Override
-    public ReEntranceLock getReEntranceLock() {
-        return lock;
     }
 
     @Override
-    public IClassProvider getClassProvider() {
+    public void beginPhase() {
+
+    }
+
+    @Override
+    public void checkEnv(final @Nullable Object bootSource) {
+
+    }
+
+    @Override
+    public @NonNull ReEntranceLock getReEntranceLock() {
+        return this.lock;
+    }
+
+    @Override
+    public @NonNull IClassProvider getClassProvider() {
         return this;
     }
 
     @Override
-    public IClassBytecodeProvider getBytecodeProvider() {
+    public @NonNull IClassBytecodeProvider getBytecodeProvider() {
         return this;
     }
 
     @Override
-    public ITransformerProvider getTransformerProvider() {
+    public @NonNull ITransformerProvider getTransformerProvider() {
         return this;
     }
 
     @Override
-    public IClassTracker getClassTracker() {
+    public @NonNull IClassTracker getClassTracker() {
         return this;
     }
 
     @Override
-    public IMixinAuditTrail getAuditTrail() {
+    public @Nullable IMixinAuditTrail getAuditTrail() {
         return null;
     }
 
     @Override
-    public IFeatureValidator getFeatureValidator() {
+    public @NonNull IFeatureValidator getFeatureValidator() {
         return IFeatureValidator.ALLOW_ALL;
     }
 
     @Override
-    public IAdviceProvider getAdviceProvider() {
-        return (_, _) -> "Update Mosaic";
+    public @NonNull IAdviceProvider getAdviceProvider() {
+        return (final int _, final @NonNull String _) -> "Update Mosaic";
     }
 
     @Override
-    public Collection<String> getPlatformAgents() {
+    public @NonNull Collection<@NonNull String> getPlatformAgents() {
         return Collections.singletonList("org.spongepowered.asm.launch.platform.MixinPlatformAgentDefault");
     }
 
     @Override
-    public IContainerHandle getPrimaryContainer() {
+    public @NonNull IContainerHandle getPrimaryContainer() {
         try {
             return new ContainerHandleURI(MosaicMixinService.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        } catch (Exception e) {
+        } catch (@NonNull Exception e) {
             throw new IllegalStateException(e);
         }
     }
 
     @Override
-    public Collection<IContainerHandle> getMixinContainers() {
+    public @NonNull Collection<@NonNull IContainerHandle> getMixinContainers() {
         return List.of();
     }
 
     @Override
-    public InputStream getResourceAsStream(final String name) {
+    public @Nullable InputStream getResourceAsStream(final @NonNull String name) {
         return loader.getResourceAsStream(name);
     }
 
     @Override
-    public void registerInvalidClass(final String className) {}
+    public void registerInvalidClass(final @Nullable String className) {
+
+    }
 
     @Override
-    public boolean isClassLoaded(final String className) {
+    public boolean isClassLoaded(final @NonNull String className) {
         return loader.isLoaded(className);
     }
 
     @Override
-    public String getClassRestrictions(final String className) {
+    public @NonNull String getClassRestrictions(final @NonNull String className) {
         return "";
     }
 
     @Override
-    public Collection<ITransformer> getTransformers() {
+    public @NonNull Collection<ITransformer> getTransformers() {
         return List.of();
     }
 
     @Override
-    public Collection<ITransformer> getDelegatedTransformers() {
+    public @NonNull Collection<@NonNull ITransformer> getDelegatedTransformers() {
         return List.of();
     }
 
     @Override
-    public void addTransformerExclusion(final String name) {}
+    public void addTransformerExclusion(final @NonNull String name) {
+
+    }
 
     @Override
-    public String getSideName() {
+    public @NonNull String getSideName() {
         return "SERVER";
     }
 
     @Override
-    public MixinEnvironment.CompatibilityLevel getMinCompatibilityLevel() {
+    public MixinEnvironment.@NonNull CompatibilityLevel getMinCompatibilityLevel() {
         return MixinEnvironment.CompatibilityLevel.JAVA_17;
     }
 
     @Override
-    public MixinEnvironment.CompatibilityLevel getMaxCompatibilityLevel() {
+    public MixinEnvironment.@NonNull CompatibilityLevel getMaxCompatibilityLevel() {
         return MixinEnvironment.CompatibilityLevel.JAVA_25;
     }
 
     @Override
-    public ILogger getLogger(final String name) {
+    public @NonNull ILogger getLogger(final @Nullable String name) {
         return LOGGER;
     }
 }

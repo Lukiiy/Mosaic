@@ -2,6 +2,8 @@ package io.papermc.paper.mixin.launch;
 
 import java.io.PrintStream;
 import java.util.regex.Matcher;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.logging.Level;
 import org.spongepowered.asm.logging.LoggerAdapterAbstract;
 
@@ -11,26 +13,26 @@ final class MosaicMixinLogger extends LoggerAdapterAbstract {
     }
 
     @Override
-    public String getType() {
+    public @NonNull String getType() {
         return getId();
     }
 
     @Override
-    public void catching(final Level level, final Throwable t) {
-        log(level, "Catching " + t, t);
+    public void catching(final @NonNull Level level, final @NonNull Throwable t) {
+        this.log(level, "Catching " + t, t);
     }
 
     @Override
-    public void log(final Level level, String message, final Object... params) {
+    public void log(final @NonNull Level level, @NonNull String message, final @NonNull Object... params) {
         Throwable thrown = params.length > 0 && params[params.length - 1] instanceof Throwable t ? t : null;
 
         for (Object param : params) message = message.replaceFirst("\\{}", Matcher.quoteReplacement(String.valueOf(param))); // the {} param thingies
 
-        log(level, message, thrown);
+        this.log(level, message, thrown);
     }
 
     @Override
-    public void log(final Level level, final String message, final Throwable t) {
+    public void log(final @NonNull Level level, final @NonNull String message, final @Nullable Throwable t) {
         if (level == Level.DEBUG || level == Level.TRACE) return;
 
         PrintStream out = level == Level.INFO ? System.out : System.err;
@@ -40,8 +42,8 @@ final class MosaicMixinLogger extends LoggerAdapterAbstract {
     }
 
     @Override
-    public <T extends Throwable> T throwing(final T t) {
-        log(Level.ERROR, "Throwing " + t, t);
+    public @NonNull <T extends Throwable> T throwing(final @NonNull T t) {
+        this.log(Level.ERROR, "Throwing " + t, t);
 
         return t;
     }

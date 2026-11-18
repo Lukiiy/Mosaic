@@ -6,9 +6,14 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import org.jspecify.annotations.NonNull;
 
-public class Launcher {
-    public static void main(String[] args) throws Throwable {
+public final class Launcher {
+    private Launcher() {
+
+    }
+
+    public static void main(@NonNull String @NonNull [] args) throws Throwable {
         MixinClassLoader loader = new MixinClassLoader(getClasspath(), ClassLoader.getPlatformClassLoader());
 
         Thread.currentThread().setContextClassLoader(loader);
@@ -18,12 +23,12 @@ public class Launcher {
 
         try {
             main.getMethod("main", String[].class).invoke(null, (Object) args);
-        } catch (InvocationTargetException e) {
+        } catch (@NonNull InvocationTargetException e) {
             throw e.getCause();
         }
     }
 
-    private static URL[] getClasspath() throws Exception {
+    private static @NonNull URL @NonNull [] getClasspath() throws Exception {
         ClassLoader loader = Launcher.class.getClassLoader();
         if (loader instanceof URLClassLoader u) return u.getURLs();
 
