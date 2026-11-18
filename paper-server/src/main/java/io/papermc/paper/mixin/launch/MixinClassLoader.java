@@ -78,11 +78,9 @@ public final class MixinClassLoader extends URLClassLoader { // todo
             if (clazz == null) {
                 if (isBridged(name)) return this.bridge.loadClass(name);
 
-                try {
-                    clazz = getParent().loadClass(name); // JDK classes
-                } catch (@NonNull ClassNotFoundException _) {
-                    clazz = this.defineFromResource(name);
-                }
+                String path = name.replace('.', '/') + ".class";
+
+                clazz = this.getParent().getResource(path) != null ? this.getParent().loadClass(name) : this.defineFromResource(name);
             }
 
             if (resolve) this.resolveClass(clazz);
