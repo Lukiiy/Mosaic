@@ -19,7 +19,7 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 public final class MixinScanner {
     private static final MosaicMixinLogger LOGGER = new MosaicMixinLogger();
-    private static final String CONF_KEY = "mixinConfig";
+    private static final String CONF_KEY = "mixin-config";
 
     private MixinScanner() {
 
