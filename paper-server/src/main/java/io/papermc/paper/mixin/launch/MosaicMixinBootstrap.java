@@ -1,9 +1,9 @@
 package io.papermc.paper.mixin.launch;
 
+import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Path;
-import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
