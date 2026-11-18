@@ -64,14 +64,21 @@ public final class MixinScanner {
 
             Object value = map.get(CONF_KEY);
             Collection<?> raw = value instanceof Collection<?> list ? list : List.of(value);
+            Object name = map.get("name");
+            if (name == null) return List.of();
 
-            return raw.stream().map(o -> String.valueOf(o).trim()).filter(s -> !s.isEmpty()).distinct()
-                .filter(config -> {
-                    if (jarFile.getJarEntry(config) != null) return true;
+            String plugin = String.valueOf(name);
+            List<String> configs = raw.stream().map(o -> String.valueOf(o).trim()).filter(s -> !s.isEmpty()).distinct().toList();
+            List<String> missing = configs.stream().filter(c -> jarFile.getJarEntry(c) == null).toList();
 
-                    LOGGER.warn("[Mosaic] " + jar.getFileName() + ": mixin config '" + config + "' not found in jar, ignoring");
-                    return false;
-                }).toList();
+            if (!missing.isEmpty()) {
+                MosaicPlugins.block(plugin, missing + " does not have a mixin config.");
+
+                return List.of();
+            }
+
+            MosaicPlugins.register(plugin, configs);
+            return configs;
         }
     }
 
