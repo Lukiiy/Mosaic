@@ -6,6 +6,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.FabricUtil;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.transformer.IMixinTransformer;
@@ -27,6 +28,7 @@ public final class MosaicMixinBootstrap {
 
         loader.setMixinSources(found.jars().toArray(new URL[0]));
         found.configs().forEach(Mixins::addConfiguration);
+        Mixins.getConfigs().forEach(entry -> entry.getConfig().decorate(FabricUtil.KEY_MOD_ID, MosaicPlugins.ownerOf(entry.getName()).replaceAll("[^A-Za-z0-9_]", "_"))); // fixes generated helpers' jvm name
         System.out.println("[Mosaic] plugin mixin configss " + found.configs());
 
         try {

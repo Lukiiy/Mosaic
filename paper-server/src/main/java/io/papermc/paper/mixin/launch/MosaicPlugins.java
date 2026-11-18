@@ -34,4 +34,8 @@ public final class MosaicPlugins { // registry, ig
     public static List<String> configsOf(final String plugin) {
         return MOSAIC.getOrDefault(plugin, List.of());
     }
+
+    static String ownerOf(final String config) {
+        return MOSAIC.entrySet().stream().filter(e -> e.getValue().contains(config)).map(Map.Entry::getKey).findFirst().orElse("Mosaic");
+    }
 }
