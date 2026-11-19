@@ -36,7 +36,7 @@ public final class MosaicGlobalPropertyService implements IGlobalPropertyService
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> @Nullable T getProperty(final @NonNull IPropertyKey key, final @Nullable T defaultValue) {
+    public @Nullable <T> T getProperty(final @NonNull IPropertyKey key, final @Nullable T defaultValue) {
         return (T) PROPERTIES.getOrDefault(((StringKey) key).key(), defaultValue);
     }
 

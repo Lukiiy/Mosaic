@@ -159,7 +159,7 @@ public final class MosaicMixinService implements IMixinService, IClassProvider, 
 
     @Override
     public @NonNull IAdviceProvider getAdviceProvider() {
-        return (final int _, final @NonNull String _) -> "Update Mosaic";
+        return (int _, @NonNull String _) -> "Update Mosaic";
     }
 
     @Override
